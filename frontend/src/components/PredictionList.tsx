@@ -60,14 +60,6 @@ const PredictionList: React.FC = () => {
               <PredictionCard key={prediction.id} prediction={prediction} isAI={true} />
             ))}
         </div>
-        <div>
-          <h2 className="text-xl font-bold mb-4">KOL Predictions</h2>
-          {predictions
-            .filter(p => p.predictorType === 'KOL')
-            .map(prediction => (
-              <PredictionCard key={prediction.id} prediction={prediction} isAI={false} />
-            ))}
-        </div>
       </div>
     </div>
   );

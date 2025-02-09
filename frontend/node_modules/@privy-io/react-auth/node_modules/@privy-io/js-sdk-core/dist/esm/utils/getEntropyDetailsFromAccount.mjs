@@ -1,0 +1,1 @@
+const e=e=>{if("ethereum"===e.chain_type)return{entropyId:e.address,entropyIdVerifier:"ethereum-address-verifier"};if("solana"===e.chain_type)return{entropyId:e.address,entropyIdVerifier:"solana-address-verifier"};throw Error("Invalid embedded wallet account type")};export{e as getEntropyDetailsFromAccount};
