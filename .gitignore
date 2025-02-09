@@ -1,0 +1,8 @@
+# Node modules and cache
+node_modules/
+**/node_modules/
+.cache
+**/.cache
+dist
+build
+.DS_Store
