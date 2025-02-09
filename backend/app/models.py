@@ -1,20 +1,26 @@
 from pydantic import BaseModel
-from datetime import datetime
-from decimal import Decimal
 from typing import Optional
+from datetime import datetime
+
+class MarketData(BaseModel):
+    volume_24h: float
+    market_cap: float
+    percent_change_24h: float
+    percent_change_7d: float
 
 class Prediction(BaseModel):
-    id: Optional[int]
-    predictor_type: str  # 'AI' or 'KOL'
-    predictor_id: str
+    id: int
     asset: str
-    predicted_price: Decimal
-    prediction_time: datetime
+    currentPrice: float
+    predictedPrice: float
     confidence: float
     reasoning: str
-
-class Stake(BaseModel):
-    prediction_id: int
-    user_address: str
-    amount: Decimal
-    support_ai: bool
+    predictorType: str
+    marketData: Optional[MarketData] = None
+    
+    # Binary market specific fields
+    question: Optional[str] = None
+    endTimestamp: Optional[float] = None
+    yesPrice: Optional[float] = None
+    noPrice: Optional[float] = None
+    totalLiquidity: Optional[float] = None

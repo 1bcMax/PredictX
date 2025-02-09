@@ -1,110 +1,66 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Dict, List
-from pydantic import BaseModel
-from .ai_engine import AIPredictionEngine
 import logging
+from typing import List
+from .ai_engine import AIPredictionEngine
+from .models import Prediction
 
-# 设置日志
+app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class AssetRequest(BaseModel):
-    asset: str
-
-class SupportRequest(BaseModel):
-    predictionId: int
-    amount: float
-    supportAi: bool
-
-app = FastAPI()
-
-# 配置 CORS
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],  # In production, replace with your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 初始化 AI 引擎
+# Initialize AI engine
 ai_engine = AIPredictionEngine()
 
-# 存储数据
-predictions: List[Dict] = []
-supports: List[Dict] = []
-prediction_id_counter = 1
+# In-memory storage for predictions (replace with database in production)
+predictions: List[Prediction] = []
 
 @app.get("/predictions")
 async def get_predictions():
-    enriched_predictions = []
-    for pred in predictions:
-        pred_supports = [s for s in supports if s["predictionId"] == pred["id"]]
-        total_amount = sum(s["amount"] for s in pred_supports)
-        supporters_count = len(pred_supports)
-        
-        enriched_pred = {
-            **pred,
-            "totalSupport": total_amount,
-            "supportersCount": supporters_count
-        }
-        enriched_predictions.append(enriched_pred)
-    
-    return enriched_predictions
+    return predictions
 
 @app.post("/predictions/ai")
-async def create_ai_prediction(request: AssetRequest):
+async def create_ai_prediction(asset: str = "BTC"):
     try:
-        global prediction_id_counter
-        # 使用 AI 引擎生成预测
-        prediction_data = await ai_engine.generate_prediction(request.asset)
+        # First try to generate a binary market prediction
+        prediction = await ai_engine.generate_binary_market(
+            asset=asset,
+            target_price=None,  # It will calculate based on current price
+            duration_days=1
+        )
         
-        # 添加 ID 和其他必要字段
-        prediction = {
-            "id": prediction_id_counter,
-            **prediction_data,
-            "supportersCount": 0,
-            "totalSupport": 0
-        }
-        prediction_id_counter += 1
-        predictions.append(prediction)
+        # Convert to your Prediction model format
+        new_prediction = Prediction(
+            id=len(predictions) + 1,
+            asset=prediction["asset"],
+            currentPrice=prediction["currentPrice"],
+            predictedPrice=prediction["targetPrice"],
+            confidence=prediction["confidence"],
+            reasoning=prediction["reasoning"],
+            predictorType="AI",
+            # Binary market specific fields
+            question=prediction["question"],
+            endTimestamp=prediction["endTimestamp"],
+            yesPrice=prediction["yesPrice"],
+            noPrice=prediction["noPrice"],
+            totalLiquidity=prediction["totalLiquidity"],
+            marketData=prediction.get("marketData")
+        )
         
-        logger.info(f"Created new AI prediction: {prediction}")
-        return prediction
+        predictions.append(new_prediction)
+        return new_prediction
+        
     except Exception as e:
         logger.error(f"Error creating AI prediction: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/predictions/kol")
-async def create_kol_prediction(prediction: Dict):
-    global prediction_id_counter
-    prediction["id"] = prediction_id_counter
-    prediction["supportersCount"] = 0
-    prediction["totalSupport"] = 0
-    prediction_id_counter += 1
-    predictions.append(prediction)
-    return prediction
-
-@app.post("/support")
-async def support_prediction(support: SupportRequest):
-    prediction = next(
-        (p for p in predictions if p["id"] == support.predictionId),
-        None
-    )
-    
-    if not prediction:
-        raise HTTPException(status_code=404, detail="Prediction not found")
-        
-    support_data = {
-        "predictionId": support.predictionId,
-        "amount": support.amount,
-        "supportAi": support.supportAi
-    }
-    supports.append(support_data)
-    
-    logger.info(f"New support added: {support_data}")
-    return {
-        "status": "success",
-        "support": support_data
-    }
+# Add other endpoints as needed...
