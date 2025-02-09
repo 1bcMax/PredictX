@@ -74,61 +74,15 @@ PredictX is an innovative crypto prediction battle platform where AI predictions
 - Database: PostgreSQL
 - Infrastructure: Docker, AWS
 
-## Getting Started
 
-### Prerequisites
-
-- Node.js 18+
+## Prerequisites
 - Python 3.10+
-- Docker and Docker Compose
-- Metamask wallet
+- Node.js 18+
+- CDP API Key
+- Poetry
 
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/predictx.git
-cd predictx
-```
-
-2. Install dependencies:
-```bash
-# Install root dependencies
-yarn install
-
-# Install packages dependencies
-yarn workspaces run install
-```
-
-3. Set up environment variables:
-```bash
-# Backend
-cp packages/backend/.env.example packages/backend/.env
-
-# Frontend 
-cp packages/frontend/.env.example packages/frontend/.env
-```
-
-4. Start the development environment:
-```bash
-# Start all services
-docker-compose up -d
-
-# Start backend
-cd packages/backend
-poetry run uvicorn app.main:app --reload
-
-# Start frontend
-cd packages/frontend
-yarn dev
-```
-
-Visit `http://localhost:3000` to access the application.
-
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Setup
+1. Clone the repository
+2. Install dependencies: `poetry install`
+3. Set up environment variables
+4. Run the app: `poetry run start`

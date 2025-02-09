@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "predictx"
+version = "0.1.0"
+description = "Crypto prediction platform using Coinbase AgentKit"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.100.0"
+uvicorn = "^0.22.0"
+cdp-agentkit-core = "^0.0.5"
+cdp-langchain = "^0.0.7"
+python-dotenv = "^1.0.0"
+sqlalchemy = "^2.0.20"
