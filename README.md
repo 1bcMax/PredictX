@@ -23,7 +23,6 @@ Review AI predictions and analysis rationale
 Choose to support or challenge predictions
 Place bets using cryptocurrency
 
-
 ### Settlement
 
 Automatic price verification after 24 hours
