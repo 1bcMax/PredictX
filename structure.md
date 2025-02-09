@@ -1,4 +1,4 @@
-prediction-platform/
+predictX/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py                # FastAPI app + 主要逻辑
