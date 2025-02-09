@@ -6,7 +6,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="p-4 bg-white shadow">
-        <h1 className="text-2xl font-bold">AI vs KOL Predictions</h1>
+        <h1 className="text-2xl font-bold">PredictX: Bet AI Prediction on Base </h1>
         <WalletConnect />
       </header>
       <main className="container mx-auto p-4">
